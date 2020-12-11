@@ -205,37 +205,45 @@ template<uint8_t PIN> volatile RoReg *FastPin<PIN>::sInPort;
 #else
 
 template<uint8_t PIN> class FastPin {
-	constexpr static bool validpin() { return false; }
-
-//	static_assert(validpin(), "Invalid pin specified");
-
-	static void _init() { }
-
+	static RwReg sPinMask;
+	static volatile RwReg *sPort;
+	static volatile RoReg *sInPort;
+	static void _init() {
+#if !defined(FASTLED_NO_PINMAP)
+		sPinMask = digitalPinToBitMask(PIN);
+		sPort = portOutputRegister(digitalPinToPort(PIN));
+		sInPort = portInputRegister(digitalPinToPort(PIN));
+#endif
+	}
 public:
 	typedef volatile RwReg * port_ptr_t;
 	typedef RwReg port_t;
 
-	inline static void setOutput() { }
-	inline static void setInput() { }
+	inline static void setOutput() { _init(); pinMode(PIN, OUTPUT); }
+	inline static void setInput() { _init(); pinMode(PIN, INPUT); }
 
-	inline static void hi() __attribute__ ((always_inline)) { }
-	inline static void lo() __attribute__ ((always_inline)) { }
+	inline static void hi() __attribute__ ((always_inline)) { *sPort |= sPinMask; }
+	inline static void lo() __attribute__ ((always_inline)) { *sPort &= ~sPinMask; }
 
-	inline static void strobe() __attribute__ ((always_inline)) { }
+	inline static void strobe() __attribute__ ((always_inline)) { toggle(); toggle(); }
 
-	inline static void toggle() __attribute__ ((always_inline)) { }
+	inline static void toggle() __attribute__ ((always_inline)) { *sInPort = sPinMask; }
 
-	inline static void hi(register port_ptr_t port) __attribute__ ((always_inline)) { }
-	inline static void lo(register port_ptr_t port) __attribute__ ((always_inline)) { }
-	inline static void set(register port_t val) __attribute__ ((always_inline)) { }
+	inline static void hi(register port_ptr_t port) __attribute__ ((always_inline)) { *port |= sPinMask; }
+	inline static void lo(register port_ptr_t port) __attribute__ ((always_inline)) { *port &= ~sPinMask; }
+	inline static void set(register port_t val) __attribute__ ((always_inline)) { *sPort = val; }
 
-	inline static void fastset(register port_ptr_t port, register port_t val) __attribute__ ((always_inline)) { }
+	inline static void fastset(register port_ptr_t port, register port_t val) __attribute__ ((always_inline)) { *port  = val; }
 
-	static port_t hival() __attribute__ ((always_inline)) { return 0; }
-	static port_t loval() __attribute__ ((always_inline)) { return 0;}
-	static port_ptr_t  port() __attribute__ ((always_inline)) { return NULL; }
-	static port_t mask() __attribute__ ((always_inline)) { return 0; }
+	static port_t hival() __attribute__ ((always_inline)) { return *sPort | sPinMask;  }
+	static port_t loval() __attribute__ ((always_inline)) { return *sPort & ~sPinMask; }
+	static port_ptr_t  port() __attribute__ ((always_inline)) { return sPort; }
+	static port_t mask() __attribute__ ((always_inline)) { return sPinMask; }
 };
+
+template<uint8_t PIN> RwReg FastPin<PIN>::sPinMask;
+template<uint8_t PIN> volatile RwReg *FastPin<PIN>::sPort;
+template<uint8_t PIN> volatile RoReg *FastPin<PIN>::sInPort;
 
 #endif
 
