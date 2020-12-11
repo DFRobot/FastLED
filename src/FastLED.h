@@ -179,7 +179,7 @@ class CFastLED {
 	// int m_nControllers;
 	uint8_t  m_Scale; 				///< The current global brightness scale setting
 	uint16_t m_nFPS;					///< Tracking for current FPS value
-	uint32_t m_nMinMicros;		///< minimum µs between frames, used for capping frame rates.
+	uint32_t m_nMinMicros;		///< minimum μs between frames, used for capping frame rates.
 	uint32_t m_nPowerData;		///< max power use parameter
 	power_func m_pPowerFunc;	///< function for overriding brightness when using FastLED.show();
 
@@ -198,7 +198,7 @@ public:
 	/// @param nLedsOrOffset - number of leds (3 argument version) or offset into the data array
 	/// @param nLedsIfOffset - number of leds (4 argument version)
 	/// @returns a reference to the added controller
-	static CLEDController &addLeds(CLEDController *pLed, struct CRGB *data, int nLedsOrOffset, int nLedsIfOffset = 0);
+	static CLEDController &addLeds(CLEDController *pLed, struct CRGB *data, int nLedsOrOffset, int nLedsIfOffset = 1);
 
 	/// @name Adding SPI based controllers
   //@{
@@ -220,7 +220,9 @@ public:
 	/// @tparam RGB_ORDER - the rgb ordering for the leds (e.g. what order red, green, and blue data is written out in)
 	/// @tparam SPI_DATA_RATE - the data rate to drive the SPI clock at, defined using DATA_RATE_MHZ or DATA_RATE_KHZ macros
 	/// @returns a reference to the added controller
-	template<ESPIChipsets CHIPSET,  uint8_t DATA_PIN, uint8_t CLOCK_PIN, EOrder RGB_ORDER, uint32_t SPI_DATA_RATE > CLEDController &addLeds(struct CRGB *data, int nLedsOrOffset, int nLedsIfOffset = 0) {
+	template<ESPIChipsets CHIPSET,  uint8_t DATA_PIN, uint8_t CLOCK_PIN, EOrder RGB_ORDER, uint32_t SPI_DATA_RATE > 
+	CLEDController &addLeds(struct CRGB *data, int nLedsOrOffset, int nLedsIfOffset = 0) {
+	//Serial.println("c");
 		switch(CHIPSET) {
 			case LPD6803: { static LPD6803Controller<DATA_PIN, CLOCK_PIN, RGB_ORDER, SPI_DATA_RATE> c; return addLeds(&c, data, nLedsOrOffset, nLedsIfOffset); }
 			case LPD8806: { static LPD8806Controller<DATA_PIN, CLOCK_PIN, RGB_ORDER, SPI_DATA_RATE> c; return addLeds(&c, data, nLedsOrOffset, nLedsIfOffset); }
@@ -234,7 +236,9 @@ public:
 		}
 	}
 
-	template<ESPIChipsets CHIPSET,  uint8_t DATA_PIN, uint8_t CLOCK_PIN > static CLEDController &addLeds(struct CRGB *data, int nLedsOrOffset, int nLedsIfOffset = 0) {
+	template<ESPIChipsets CHIPSET,  uint8_t DATA_PIN, uint8_t CLOCK_PIN > 
+		static CLEDController &addLeds(struct CRGB *data, int nLedsOrOffset, int nLedsIfOffset = 0) {
+             //Serial.println("d");
 		switch(CHIPSET) {
 			case LPD6803: { static LPD6803Controller<DATA_PIN, CLOCK_PIN> c; return addLeds(&c, data, nLedsOrOffset, nLedsIfOffset); }
 			case LPD8806: { static LPD8806Controller<DATA_PIN, CLOCK_PIN> c; return addLeds(&c, data, nLedsOrOffset, nLedsIfOffset); }
@@ -248,7 +252,9 @@ public:
 		}
 	}
 
-	template<ESPIChipsets CHIPSET,  uint8_t DATA_PIN, uint8_t CLOCK_PIN, EOrder RGB_ORDER > static CLEDController &addLeds(struct CRGB *data, int nLedsOrOffset, int nLedsIfOffset = 0) {
+	template<ESPIChipsets CHIPSET,  uint8_t DATA_PIN, uint8_t CLOCK_PIN, EOrder RGB_ORDER > 
+		static CLEDController &addLeds(struct CRGB *data, int nLedsOrOffset, int nLedsIfOffset = 0) {
+              //Serial.println("e");
 		switch(CHIPSET) {
 			case LPD6803: { static LPD6803Controller<DATA_PIN, CLOCK_PIN, RGB_ORDER> c; return addLeds(&c, data, nLedsOrOffset, nLedsIfOffset); }
 			case LPD8806: { static LPD8806Controller<DATA_PIN, CLOCK_PIN, RGB_ORDER> c; return addLeds(&c, data, nLedsOrOffset, nLedsIfOffset); }
@@ -305,6 +311,7 @@ public:
 
 	template<template<uint8_t DATA_PIN, EOrder RGB_ORDER> class CHIPSET, uint8_t DATA_PIN>
 	static CLEDController &addLeds(struct CRGB *data, int nLedsOrOffset, int nLedsIfOffset = 0) {
+			//Serial.println("a");
 		static CHIPSET<DATA_PIN, RGB> c;
 		return addLeds(&c, data, nLedsOrOffset, nLedsIfOffset);
 	}
@@ -312,6 +319,7 @@ public:
 	template<template<uint8_t DATA_PIN> class CHIPSET, uint8_t DATA_PIN>
 	static CLEDController &addLeds(struct CRGB *data, int nLedsOrOffset, int nLedsIfOffset = 0) {
 		static CHIPSET<DATA_PIN> c;
+				//Serial.println("b");
 		return addLeds(&c, data, nLedsOrOffset, nLedsIfOffset);
 	}
 
@@ -356,6 +364,7 @@ public:
 	template<template<EOrder RGB_ORDER> class CHIPSET, EOrder RGB_ORDER>
 	static CLEDController &addLeds(struct CRGB *data, int nLedsOrOffset, int nLedsIfOffset = 0) {
 		static CHIPSET<RGB_ORDER> c;
+
 		return addLeds(&c, data, nLedsOrOffset, nLedsIfOffset);
 	}
 

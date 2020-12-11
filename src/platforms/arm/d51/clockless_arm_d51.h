@@ -25,15 +25,18 @@ class ClocklessController : public CPixelLEDController<RGB_ORDER> {
 
 public:
 	virtual void init() {
+		
 		FastPin<DATA_PIN>::setOutput();
 		mPinMask = FastPin<DATA_PIN>::mask();
 		mPort = FastPin<DATA_PIN>::port();
+	
 	}
 
 	virtual uint16_t getMaxRefreshRate() const { return 400; }
 
 protected:
 	virtual void showPixels(PixelController<RGB_ORDER> & pixels) {
+                                     Serial.println("f");
     	mWait.wait();
 		if(!showRGBInternal(pixels)) {
 			sei(); delayMicroseconds(WAIT_TIME); cli();
@@ -94,11 +97,11 @@ protected:
 			pixels.stepDithering();
 			#if (FASTLED_ALLOW_INTERRUPTS == 1)
 			cli();
-			// if interrupts took longer than 45µs, punt on the current frame
+			// if interrupts took longer than 45μs, punt on the current frame
 			if(ARM_DWT_CYCCNT > next_mark) {
 				if((ARM_DWT_CYCCNT-next_mark) > ((WAIT_TIME-INTERRUPT_THRESHOLD)*CLKS_PER_US)) { sei(); return 0; }
 			}
-
+                     //Serial.println("a");
 			hi = *port | FastPin<DATA_PIN>::mask();
 			lo = *port & ~FastPin<DATA_PIN>::mask();
 			#endif

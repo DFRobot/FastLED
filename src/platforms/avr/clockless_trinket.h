@@ -22,7 +22,7 @@ FASTLED_NAMESPACE_BEGIN
 #define FASTLED_SLOW_CLOCK_ADJUST
 #endif
 
-#define US_PER_TICK (64 / (F_CPU/1000000))
+#define US_PER_TICK   (64 / (F_CPU/1000000))
 
 // Variations on the functions in delay.h - w/a loop var passed in to preserve registers across calls by the optimizer/compiler
 template<int CYCLES> inline void _dc(register uint8_t & loopvar);
@@ -114,7 +114,7 @@ protected:
 
 		mWait.wait();
 		cli();
-
+           //  Serial.println("ab");
 		showRGBInternal(pixels);
 
 		// Adjust the timer

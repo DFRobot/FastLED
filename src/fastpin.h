@@ -207,7 +207,7 @@ template<uint8_t PIN> volatile RoReg *FastPin<PIN>::sInPort;
 template<uint8_t PIN> class FastPin {
 	constexpr static bool validpin() { return false; }
 
-	static_assert(validpin(), "Invalid pin specified");
+//	static_assert(validpin(), "Invalid pin specified");
 
 	static void _init() { }
 

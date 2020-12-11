@@ -148,7 +148,7 @@ void ESP32RMTController::showPixels()
         spi_flash_op_lock();
 #endif
     }
-
+      Serial.println("ab");
     // -- Keep track of the number of strips we've seen
     gNumStarted++;
 

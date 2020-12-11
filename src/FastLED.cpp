@@ -44,16 +44,19 @@ CLEDController &CFastLED::addLeds(CLEDController *pLed,
 
 void CFastLED::show(uint8_t scale) {
 	// guard against showing too rapidly
+
 	while(m_nMinMicros && ((micros()-lastshow) < m_nMinMicros));
 	lastshow = micros();
 
 	// If we have a function for computing power, use it!
 	if(m_pPowerFunc) {
+		
 		scale = (*m_pPowerFunc)(scale, m_nPowerData);
 	}
 
 	CLEDController *pCur = CLEDController::head();
 	while(pCur) {
+		//获取为控制器设置的抖动选项
 		uint8_t d = pCur->getDither();
 		if(m_nFPS < 100) { pCur->setDither(0); }
 		pCur->showLeds(scale);

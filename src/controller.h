@@ -404,6 +404,7 @@ protected:
     ///@param nLeds the number of leds being written out
     ///@param scale the rgb scaling to apply to each led before writing it out
     virtual void show(const struct CRGB *data, int nLeds, CRGB scale) {
+       //Serial.println("f");
         PixelController<RGB_ORDER, LANES, MASK> pixels(data, nLeds, scale, getDither());
         showPixels(pixels);
     }

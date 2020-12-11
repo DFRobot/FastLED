@@ -532,7 +532,6 @@ class PL9823Controller : public ClocklessController<DATA_PIN, 3 * FMUL, 8 * FMUL
 #else
 #define C_NS(_NS) (((_NS * ((CLOCKLESS_FREQUENCY / 1000000L)) + 999)) / 1000)
 #endif
-
 // GE8822 - 350ns 660ns 350ns
 template <uint8_t DATA_PIN, EOrder RGB_ORDER = RGB>
 class GE8822Controller800Khz : public ClocklessController<DATA_PIN, C_NS(350), C_NS(660), C_NS(350), RGB_ORDER, 4> {};
